@@ -1,0 +1,122 @@
+
+Description: >
+      "Contrast Security | Production Pipeline"
+
+Resources:
+  ProdBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      #Name: CS-ECS-ProdDeploy
+      Description: ECS Prod Deploy Project
+      ServiceRole: arn:aws:iam::948591845834:role/service-role/codebuild-ContrastSecurityInfrastructureBuild-service-role
+      Artifacts:
+        Type: CODEPIPELINE 
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:1.0
+      Source:
+        Type: CODEPIPELINE
+      TimeoutInMinutes: 10
+      Tags:
+        - Key: Name
+          Value: CS-Build-Project
+
+
+  ProdPipeline: 
+    Type: AWS::CodePipeline::Pipeline 
+    Properties: 
+      RoleArn: arn:aws:iam::948591845834:role/service-role/ContrastSecurityPipelineRole
+      Stages: 
+        - Name: Source
+          Actions:
+            - InputArtifacts: []
+              ActionTypeId:
+                Version: '1'
+                Owner: ThirdParty
+                Category: Source
+                Provider: GitHub
+              OutputArtifacts:
+                - Name: SourceArtifact
+              RunOrder: 1
+              Configuration:
+                Owner: manisankarmani
+                Repo: ContrastSecurity
+                PollForSourceChanges: 'false'
+                Branch: master
+                OAuthToken: 792b49c81af0612ac58590f978ae4f3384bbf0ca
+              Name: ApplicationSource
+
+        - Name: Approval
+          Actions:
+            - Name: ApproveChangeSet
+              ActionTypeId:
+                Category: Approval
+                Owner: AWS
+                Provider: Manual
+                Version: '1'
+              Configuration:
+                #NotificationArn: !Ref CodePipelineSNSTopic
+                CustomData: !Sub 'A new change set was created for the stack. Do you want to implement the changes?'
+              RunOrder: '2'
+
+        - Name: Build
+          Actions:
+            - Name: BuildCode
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: '1'
+              Configuration:
+                ProjectName: !Ref ProdBuildProject
+                PrimarySource: SourceArtifact
+              OutputArtifacts:
+                - Name: MyPipeline-BuildArtifact
+              InputArtifacts:
+                - Name: SourceArtifact
+              RunOrder: '3'
+      ArtifactStore: 
+        Type: S3 
+        Location: codepipeline-us-east-1-964850094883
+
+      # - Name: ProdStage
+          #   Actions:
+          #     - Name: CreateChangeSet
+          #       ActionTypeId:
+          #         Category: Deploy
+          #         Owner: AWS
+          #         Provider: CloudFormation
+          #         Version: '1'
+          #       InputArtifacts:
+          #         - Name: TemplateSource
+          #       Configuration:
+          #         ActionMode: CHANGE_SET_REPLACE
+          #         RoleArn: !GetAtt [CFNRole, Arn]
+          #         StackName: !Ref ProdStackName
+          #         ChangeSetName: !Ref ChangeSetName
+          #         TemplateConfiguration: !Sub "TemplateSource::${ProdStackConfig}"
+          #         TemplatePath: !Sub "TemplateSource::${TemplateFileName}"
+          #       RunOrder: '1'
+          #     - Name: ApproveChangeSet
+          #       ActionTypeId:
+          #         Category: Approval
+          #         Owner: AWS
+          #         Provider: Manual
+          #         Version: '1'
+          #       Configuration:
+          #         NotificationArn: !Ref CodePipelineSNSTopic
+          #         CustomData: !Sub 'A new change set was created for the ${ProdStackName} stack. Do you want to implement the changes?'
+          #       RunOrder: '2'
+          #     - Name: ExecuteChangeSet
+          #       ActionTypeId:
+          #         Category: Deploy
+          #         Owner: AWS
+          #         Provider: CloudFormation
+          #         Version: '1'
+          #       Configuration:
+          #         ActionMode: CHANGE_SET_EXECUTE
+          #         ChangeSetName: !Ref ChangeSetName
+          #         RoleArn: !GetAtt [CFNRole, Arn]
+          #         StackName: !Ref ProdStackName
+          #       RunOrder: '3'
