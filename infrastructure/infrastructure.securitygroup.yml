@@ -1,0 +1,62 @@
+Description: >
+    "Contrast Security - Creating Security Group"
+
+Parameters:  
+  Environment:
+    Description: "Define Environment"
+    Type: String
+    Default: "Dev"
+
+Resources:
+
+# Security Group For the ECS Fargate Cluster 
+  ContainerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Container Security Group
+      VpcId: !ImportValue VpcId
+      Tags:
+       - Key: "Name"
+         Value: !Join
+            - ""
+            -  
+              - !Ref Environment
+              - "-"
+              - "ContainerSecurityGroup"
+  EcsSecurityGroupIngressFromPublicALB:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: Ingress from the public ALB
+      GroupId: !Ref ContainerSecurityGroup
+      IpProtocol: -1
+      SourceSecurityGroupId: !Ref 'ApplicationLoadBalancerSecurityGroup'
+
+  ApplicationLoadBalancerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Public Load Balancer Security Group
+      VpcId: !ImportValue VpcId
+      SecurityGroupIngress:
+          - CidrIp: 0.0.0.0/0
+            IpProtocol: -1
+      Tags:
+       - Key: "Name"
+         Value: !Join
+            - ""
+            -  
+              - !Ref Environment
+              - "-"
+              - "ApplicationLoadBalancerSecurityGroup"
+
+Outputs:
+  ContainerSecurityGroup:
+    Description: Container Security Group
+    Value: !Ref ContainerSecurityGroup
+    Export:
+      Name: ContainerSecurityGroup
+
+  ApplicationLoadBalancerSecurityGroup:
+    Description: Public Load Balancer Security Group
+    Value: !Ref ApplicationLoadBalancerSecurityGroup
+    Export:
+      Name: ApplicationLoadBalancerSecurityGroup

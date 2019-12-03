@@ -1,0 +1,32 @@
+Description: >
+  "Contrast Security - Creating ECS Cluster "
+
+Parameters:
+  ClusterName:
+    Description: Cluster Name 
+    Type: String
+    Default: "CS-Fargate"
+  Environment:
+    Description: "Define Environment"
+    Type: String
+    Default: "Dev"
+
+Resources:
+  ECSFargateCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Ref ClusterName
+      Tags:
+       - Key: "Name"
+         Value: !Join
+            - ""
+            -  
+              - !Ref Environment
+              - "-"
+              - !Ref ClusterName
+Outputs:
+ ECSFargateCluster:
+    Description: CS ECS Cluster for Production Application
+    Value: !Ref ECSFargateCluster
+    Export:
+      Name: ECSFargateCluster
