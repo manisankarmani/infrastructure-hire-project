@@ -1,0 +1,40 @@
+version: 0.2
+env:
+  parameter-store:
+    PS_AWS_ACCESS_KEY_ID: /prod/aws_access_key_id
+    PS_AWS_SECRET_ACCESS_KEY: /prod/aws_secret_access_key
+phases:
+  install:
+    commands:
+      - echo "Install aws cli and boto3 "
+      - apt-get update
+      - apt-get install -y awscli
+      - pip install boto3
+  pre_build:
+    commands:
+#      - echo Can use AWS CLI ACCESS KEY and PASSWORD , but its not best practice
+#      - export AWS_ACCESS_KEY_ID=$PS_AWS_ACCESS_KEY_ID
+#      - export AWS_SECRET_ACCESS_KEY=$PS_AWS_SECRET_ACCESS_KEY
+#      - aws s3 ls --region us-east-1
+#      - echo not using above technique
+      - echo Entered the pre_build phase...
+      - echo Assuming Role using assume python script
+      - python assume
+  build:
+    commands:
+      - echo creating cloudformation template if it fails it tries to update the same in finally block
+      - aws cloudformation create-stack --stack-name CS-VPC --template-body file://infrastructure/infrastructure.vpc.yml --region=us-east-1 --profile=prod       
+      - aws cloudformation wait stack-create-complete --stack-name CS-VPC --region=us-east-1 --profile=prod       
+      - aws cloudformation create-stack --stack-name CS-IAM --template-body file://infrastructure/infrastructure.iam.yml --capabilities=CAPABILITY_IAM   --region=us-east-1 --profile=prod 
+      - aws cloudformation wait stack-create-complete --stack-name CS-IAM --region=us-east-1 --profile=prod             
+      - aws cloudformation create-stack --stack-name CS-SG --template-body file://infrastructure/infrastructure.securitygroup.yml --region=us-east-1 --profile=prod       
+      - aws cloudformation wait stack-create-complete --stack-name CS-SG --region=us-east-1 --profile=prod                   
+      - aws cloudformation create-stack --stack-name CS-ECS-CLUSTER --template-body file://infrastructure/infrastructure.ecs.cluster.yml --region=us-east-1 --profile=prod 
+      - aws cloudformation wait stack-create-complete --stack-name CS-ECS-CLUSTER --region=us-east-1 --profile=prod                         
+      - aws cloudformation create-stack --stack-name CS-ECS-SERVICE --template-body file://infrastructure/infrastructure.ecs.service.plus.yml --region=us-east-1 --profile=prod 
+      - aws cloudformation wait stack-create-complete --stack-name CS-ECS-SERVICE --region=us-east-1 --profile=prod                               
+      
+  post_build:
+    commands:
+      - echo Entered the post_build phase...
+      
