@@ -9,12 +9,12 @@ The solution will be created in the following steps:
 
 ### Master Account  
 Infrastucture will be deployed from Master Account which has Cross Account access to Production Account. 
-It can be achived by the following 2 ways
+It can be achived by the following ways
 
 1. SSM Parameters - AWS Access and Secret key stored in encrypted secret as SSM parameters 
 2. Cross Account Access - Cross Account access via access role and STS
 
-Chose to use the 2nd Option in this case. Used Mastar Account and a pipeline to create the infrastructure in Production Account. 
+Chose to use the 2nd Option in this case as its AWS best practice.Used Mastar Account and a pipeline to create the infrastructure in Production Account. 
 
 ### Production Account  
 Supplied by Contrast Security as a deploying medium
