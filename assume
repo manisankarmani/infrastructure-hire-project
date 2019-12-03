@@ -1,0 +1,49 @@
+# Copyright 2010-2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"). You
+# may not use this file except in compliance with the License. A copy of
+# the License is located at
+#
+# http://aws.amazon.com/apache2.0/
+#
+# or in the "license" file accompanying this file. This file is
+# distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
+# ANY KIND, either express or implied. See the License for the specific
+# language governing permissions and limitations under the License.
+
+import boto3
+import os
+
+# Create IAM client
+sts_default_provider_chain = boto3.client('sts')
+
+print('Default Provider Identity: : ' + sts_default_provider_chain.get_caller_identity()['Arn'])
+
+# Replace the ARN below with the one you need 
+role_to_assume_arn='arn:aws:iam::255027719495:role/remote_msdasitltd'
+role_session_name='prod'
+
+response=sts_default_provider_chain.assume_role(
+    RoleArn=role_to_assume_arn,
+    RoleSessionName=role_session_name
+)
+
+creds=response['Credentials']
+
+sts_assumed_role = boto3.client('sts',
+    aws_access_key_id=creds['AccessKeyId'],
+    aws_secret_access_key=creds['SecretAccessKey'],
+    aws_session_token=creds['SessionToken'],
+)
+# Create ~/.aws/credentials file 
+os.system('mkdir ~/.aws && touch ~/.aws/credentials && chmod 600 ~/.aws/credentials')
+
+# Write To AWS Configure File as AWS Profile
+home=os.environ['HOME']
+aws_config_file=open(home+'/.aws/credentials','a+')
+aws_config_file.write("\n[prod]")
+aws_config_file.write('\n aws_access_key_id='+creds['AccessKeyId'])
+aws_config_file.write('\n aws_secret_access_key='+creds['SecretAccessKey'])
+aws_config_file.write('\n aws_session_token='+creds['SessionToken'])
+aws_config_file.close()
+print('Successfully Created Entry For Credentials')
