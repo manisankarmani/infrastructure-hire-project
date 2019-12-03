@@ -1,9 +1,25 @@
+# -------------------------------------------------------------------------------------------------------------#
+# The cloudformation template is taken from sample page of codedeploy / codecommit / codebuild / codepipeline  #
+# Its been modified to fit the requirement                                                                     #
+# Currently updating the same to make it better                                                                #
+# -------------------------------------------------------------------------------------------------------------#
 
 Description: >
-      "Contrast Security | Production Pipeline"
+      "Contrast Security - Production Pipeline"
 
+Parameters:
+  Environment:
+    Description: Environment tag (i.e. 'dev'). All resources will be tagged with this value
+    Type: String
+    Default: dev
+  
+  BuildName:
+    Description:  Build Name
+    Type: String
+    Default: BuildProject
+    
 Resources:
-  ProdBuildProject:
+  BuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
       #Name: CS-ECS-ProdDeploy
@@ -19,14 +35,19 @@ Resources:
         Type: CODEPIPELINE
       TimeoutInMinutes: 10
       Tags:
-        - Key: Name
-          Value: CS-Build-Project
+       - Key: "Name"
+         Value: !Join
+            - ""
+            -  
+              - !Ref Environment
+              - "-"
+              - !Ref BuildName
 
-
-  ProdPipeline: 
+  Pipeline: 
     Type: AWS::CodePipeline::Pipeline 
     Properties: 
       RoleArn: arn:aws:iam::948591845834:role/service-role/ContrastSecurityPipelineRole
+      # Temporary for testing , will have to update iam template to add the same
       Stages: 
         - Name: Source
           Actions:
@@ -45,6 +66,7 @@ Resources:
                 PollForSourceChanges: 'false'
                 Branch: master
                 OAuthToken: 792b49c81af0612ac58590f978ae4f3384bbf0ca
+                # Temporary for testing , will have to update into AWS Parameters as secret
               Name: ApplicationSource
 
         - Name: Approval
@@ -69,7 +91,7 @@ Resources:
                 Provider: CodeBuild
                 Version: '1'
               Configuration:
-                ProjectName: !Ref ProdBuildProject
+                ProjectName: !Ref BuildProject
                 PrimarySource: SourceArtifact
               OutputArtifacts:
                 - Name: MyPipeline-BuildArtifact
@@ -79,6 +101,9 @@ Resources:
       ArtifactStore: 
         Type: S3 
         Location: codepipeline-us-east-1-964850094883
+
+
+# Reference from codepipeline sample from AWS 
 
       # - Name: ProdStage
           #   Actions:
