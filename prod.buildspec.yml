@@ -12,29 +12,16 @@ phases:
       - pip install boto3
   pre_build:
     commands:
-#      - echo Can use AWS CLI ACCESS KEY and PASSWORD , but its not best practice
-#      - export AWS_ACCESS_KEY_ID=$PS_AWS_ACCESS_KEY_ID
-#      - export AWS_SECRET_ACCESS_KEY=$PS_AWS_SECRET_ACCESS_KEY
-#      - aws s3 ls --region us-east-1
-#      - echo not using above technique
-      - echo Entered the pre_build phase...
-      - echo Assuming Role using assume python script
-      - python assume
+      - docker build -t mysecretapp . 
+
   build:
     commands:
-      - echo creating cloudformation template if it fails it tries to update the same in finally block
-      - aws cloudformation create-stack --stack-name CS-VPC --template-body file://infrastructure/infrastructure.vpc.yml --region=us-east-1 --profile=prod       
-      - aws cloudformation wait stack-create-complete --stack-name CS-VPC --region=us-east-1 --profile=prod       
-      - aws cloudformation create-stack --stack-name CS-IAM --template-body file://infrastructure/infrastructure.iam.yml --capabilities=CAPABILITY_IAM   --region=us-east-1 --profile=prod 
-      - aws cloudformation wait stack-create-complete --stack-name CS-IAM --region=us-east-1 --profile=prod             
-      - aws cloudformation create-stack --stack-name CS-SG --template-body file://infrastructure/infrastructure.securitygroup.yml --region=us-east-1 --profile=prod       
-      - aws cloudformation wait stack-create-complete --stack-name CS-SG --region=us-east-1 --profile=prod                   
-      - aws cloudformation create-stack --stack-name CS-ECS-CLUSTER --template-body file://infrastructure/infrastructure.ecs.cluster.yml --region=us-east-1 --profile=prod 
-      - aws cloudformation wait stack-create-complete --stack-name CS-ECS-CLUSTER --region=us-east-1 --profile=prod                         
-      - aws cloudformation create-stack --stack-name CS-ECS-SERVICE --template-body file://infrastructure/infrastructure.ecs.service.plus.yml --region=us-east-1 --profile=prod 
-      - aws cloudformation wait stack-create-complete --stack-name CS-ECS-SERVICE --region=us-east-1 --profile=prod                               
+      - docker build -t mysecretapp . 
       
   post_build:
     commands:
-      - echo Entered the post_build phase...
-      
+      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+      - echo Build completed on `date`
+      - echo Push Image to ECR
+      - docker tag apacheimage:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/mysecretapp:latest
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/mysecretapp:latest       
