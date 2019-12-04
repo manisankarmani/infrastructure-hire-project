@@ -17,6 +17,11 @@ Parameters:
     Description:  Build Name
     Type: String
     Default: BuildProject
+  OAuthToken:
+    Description: OAuth Token for Gitlab
+    Type: 'AWS::SSM::Parameter::Value<String>'
+    Default: '/prod/git/token'
+
     
 Resources:
   BuildProject:
@@ -24,7 +29,7 @@ Resources:
     Properties:
       #Name: CS-ECS-ProdDeploy
       Description: ECS Prod Deploy Project
-      ServiceRole: arn:aws:iam::948591845834:role/service-role/codebuild-ContrastSecurityInfrastructureBuild-service-role
+      ServiceRole: !ImportValue CodeBuildServiceRole
       Artifacts:
         Type: CODEPIPELINE 
       Environment:
@@ -33,6 +38,7 @@ Resources:
         Image: aws/codebuild/standard:1.0
       Source:
         Type: CODEPIPELINE
+        BuildSpec: prod.buildspec.yml
       TimeoutInMinutes: 10
       Tags:
        - Key: "Name"
@@ -62,11 +68,11 @@ Resources:
               RunOrder: 1
               Configuration:
                 Owner: manisankarmani
-                Repo: ContrastSecurity
+                Repo: infrastructure-hire-project
                 PollForSourceChanges: 'false'
                 Branch: master
-                OAuthToken: 792b49c81af0612ac58590f978ae4f3384bbf0ca
-                # Temporary for testing , will have to update into AWS Parameters as secret
+                OAuthToken: !Ref OAuthToken
+                # Ideally should use secret manager, but it will charge my test account
               Name: ApplicationSource
 
         - Name: Approval

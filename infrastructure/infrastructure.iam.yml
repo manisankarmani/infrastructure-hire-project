@@ -2,6 +2,110 @@
 Description: >
   "Contrast Security - Creating IAM Roles For Deployment"
 Resources:
+
+  CodeBuildServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: codebuild.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      Policies:
+        - 
+          PolicyName: CodeBuildLogGroup
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+                - Effect: Allow
+                  Resource: "*"
+                  Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                  - ssm:GetParameters
+        -
+          PolicyName: CodeBuildBasePolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+                  - Action:
+                    - iam:PassRole
+                    Resource: "*"
+                    Effect: Allow
+                    Condition:
+                      StringEqualsIfExists:
+                        iam:PassedToService:
+                        - cloudformation.amazonaws.com
+                        - elasticbeanstalk.amazonaws.com
+                        - ec2.amazonaws.com
+                        - ecs-tasks.amazonaws.com
+                  - Action:
+                    - codecommit:CancelUploadArchive
+                    - codecommit:GetBranch
+                    - codecommit:GetCommit
+                    - codecommit:GetUploadArchiveStatus
+                    - codecommit:UploadArchive
+                    Resource: "*"
+                    Effect: Allow
+                  - Action:
+                    - codedeploy:CreateDeployment
+                    - codedeploy:GetApplication
+                    - codedeploy:GetApplicationRevision
+                    - codedeploy:GetDeployment
+                    - codedeploy:GetDeploymentConfig
+                    - codedeploy:RegisterApplicationRevision
+                    Resource: "*"
+                    Effect: Allow
+                  - Action:
+                    - elasticloadbalancing:*
+                    - autoscaling:*
+                    - cloudwatch:*
+                    - s3:*
+                    - sns:*
+                    - cloudformation:*
+                    - rds:*
+                    - sqs:*
+                    - ecs:*
+                    Resource: "*"
+                    Effect: Allow
+                  - Action:
+                    - lambda:InvokeFunction
+                    - lambda:ListFunctions
+                    Resource: "*"
+                    Effect: Allow
+                  - Action:
+                    - cloudformation:CreateStack
+                    - cloudformation:DeleteStack
+                    - cloudformation:DescribeStacks
+                    - cloudformation:UpdateStack
+                    - cloudformation:CreateChangeSet
+                    - cloudformation:DeleteChangeSet
+                    - cloudformation:DescribeChangeSet
+                    - cloudformation:ExecuteChangeSet
+                    - cloudformation:SetStackPolicy
+                    - cloudformation:ValidateTemplate
+                    Resource: "*"
+                    Effect: Allow
+                  - Action:
+                    - codebuild:BatchGetBuilds
+                    - codebuild:StartBuild
+                    Resource: "*"
+                    Effect: Allow
+                  - Effect: Allow
+                    Action:
+                    - cloudformation:ValidateTemplate
+                    Resource: "*"
+                  - Effect: Allow
+                    Action:
+                    - ecr:DescribeImages
+                    Resource: "*"      
+
+
+
   CodeDeployRole:
     Type: AWS::IAM::Role
     Properties:
@@ -60,7 +164,14 @@ Resources:
             Action: "sts:AssumeRole"       
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+
 Outputs:          
+  CodeBuildServiceRole:
+    Description: CodeBuild Service Role
+    Value: !Ref CodeBuildServiceRole
+    Export: 
+      Name: CodeBuildServiceRole
+
   CodeDeployRoleName:
     Description: CodeDeploy Role Name
     Value: !GetAtt CodeDeployRole.Arn
@@ -77,3 +188,4 @@ Outputs:
     Value: !GetAtt ECSExceuctionRole.Arn
     Export:
       Name: ECSExceuctionRoleArn
+  
