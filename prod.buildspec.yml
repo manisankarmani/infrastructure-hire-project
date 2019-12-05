@@ -10,6 +10,10 @@ phases:
       - apt-get update
       - apt-get install -y awscli
       - pip install boto3
+      - echo "Install Docker"
+      - apt-get install -y docker
+      - echo "Docker List"
+      - docker ps
   pre_build:
     commands:
       - docker build -t mysecretapp . 
