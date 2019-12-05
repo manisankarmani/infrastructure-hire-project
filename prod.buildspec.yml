@@ -5,15 +5,15 @@ env:
     PS_AWS_SECRET_ACCESS_KEY: /prod/aws_secret_access_key
 phases:
   install:
+    runtime-versions:
+      docker: 18  
     commands:
       - echo "Install aws cli and boto3 "
       - apt-get update
       - apt-get install -y awscli
       - pip install boto3
-      - echo "Install Docker"
-      - apt-get install -y docker
-      - service docker start
       - docker ps
+
   pre_build:
     commands:
       - docker build -t mysecretapp . 
