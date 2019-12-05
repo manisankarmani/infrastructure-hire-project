@@ -12,6 +12,7 @@ phases:
       - apt-get update
       - apt-get install -y awscli
       - pip install boto3
+      - service docker status
       - docker ps
 
   pre_build:
