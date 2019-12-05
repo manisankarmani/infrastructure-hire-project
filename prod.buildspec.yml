@@ -3,6 +3,7 @@ env:
   parameter-store:
     PS_AWS_ACCESS_KEY_ID: /prod/aws_access_key_id
     PS_AWS_SECRET_ACCESS_KEY: /prod/aws_secret_access_key
+    PROD_AWS_ACCOUNT_ID: /prod/aws_account_id
 phases:
   install:
     runtime-versions:
@@ -26,5 +27,5 @@ phases:
       - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
       - echo Build completed on `date`
       - echo Push Image to ECR
-      - docker tag mysecretapp:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/mysecretapp:latest
-      - docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/mysecretapp:latest       
+      - docker tag mysecretapp:latest ${PROD_AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/mysecretapp:latest
+      - docker push ${PROD_AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/mysecretapp:latest       
