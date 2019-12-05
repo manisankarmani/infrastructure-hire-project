@@ -36,6 +36,7 @@ Resources:
         Type: LINUX_CONTAINER
         ComputeType: BUILD_GENERAL1_SMALL
         Image: aws/codebuild/standard:2.0	
+        PrivilegedMode: true # Allows docker commands to run 
       Source:
         Type: CODEPIPELINE
         BuildSpec: prod.buildspec.yml

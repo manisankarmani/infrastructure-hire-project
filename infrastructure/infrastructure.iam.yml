@@ -27,6 +27,7 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                   - ssm:GetParameters
+                  - ecr:*
         -
           PolicyName: CodeBuildBasePolicy
           PolicyDocument:
