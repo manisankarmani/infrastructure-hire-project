@@ -12,7 +12,7 @@ phases:
       - pip install boto3
       - echo "Install Docker"
       - apt-get install -y docker
-      - systemctl start docker 
+      - service docker start
       - docker ps
   pre_build:
     commands:
