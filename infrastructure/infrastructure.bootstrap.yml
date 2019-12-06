@@ -1,0 +1,20 @@
+Description: >
+   Constrast Security - Remote Server Setup for Cross Account Access 
+
+Resources:
+  AllowRemoteAccess:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: AllowCrossAccountAccess
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: arn:aws:iam::948591845834:root
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
+
