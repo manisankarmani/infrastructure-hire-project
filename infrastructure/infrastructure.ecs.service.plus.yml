@@ -151,3 +151,12 @@ Resources:
           Values: ['*']
       ListenerArn: !Ref ApplicationLoadBalancerListener
       Priority: 1     
+
+Outputs:
+  ApplicationLoadBalancer:
+    Description: ApplicationLoadBalancer URL 
+    Value: !Join
+      - ""
+      - -
+        - "http://"
+        - !GetAtt: ApplicationLoadBalancer.DNSName
