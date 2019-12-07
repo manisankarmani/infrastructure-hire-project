@@ -3,6 +3,7 @@ env:
   parameter-store:
     PS_AWS_ACCESS_KEY_ID: /prod/aws_access_key_id
     PS_AWS_SECRET_ACCESS_KEY: /prod/aws_secret_access_key
+    GIT_TOKEN: /prod/git/token
 phases:
   install:
     commands:
@@ -33,7 +34,8 @@ phases:
       - aws cloudformation wait stack-create-complete --stack-name CS-ECS-CLUSTER --region=us-east-1 --profile=prod                         
       - aws cloudformation create-stack --stack-name CS-ECS-SERVICE --template-body file://infrastructure/infrastructure.ecs.service.plus.yml --region=us-east-1 --profile=prod 
       - aws cloudformation wait stack-create-complete --stack-name CS-ECS-SERVICE --region=us-east-1 --profile=prod                               
-      
+      - aws ssm put-parameter --name "/prod/git/token" --type "String" --value $GIT_TOKEN --overwrite
+
   post_build:
     commands:
       - echo Entered the post_build phase...

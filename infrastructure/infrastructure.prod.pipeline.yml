@@ -53,7 +53,7 @@ Resources:
   Pipeline: 
     Type: AWS::CodePipeline::Pipeline 
     Properties: 
-      RoleArn: arn:aws:iam::948591845834:role/service-role/ContrastSecurityPipelineRole
+      RoleArn: !ImportValue CodePipelineServiceRole
       # Temporary for testing , will have to update iam template to add the same
       Stages: 
         - Name: Source
