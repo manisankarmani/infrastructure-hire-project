@@ -19,8 +19,13 @@ sts_default_provider_chain = boto3.client('sts')
 
 print('Default Provider Identity: : ' + sts_default_provider_chain.get_caller_identity()['Arn'])
 
-# Replace the ARN below with the one you need 
-role_to_assume_arn='arn:aws:iam::127722852541:role/AllowCrossAccountAccess'
+# Get Remote role
+ssm = boto3.client('ssm')
+parameter = ssm.get_parameter(Name='/prod/remoterole', WithDecryption=True)
+print(parameter['Parameter']['Value'])
+
+
+role_to_assume_arn=parameter['Parameter']['Value']
 role_session_name='prod'
 
 response=sts_default_provider_chain.assume_role(
