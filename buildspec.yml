@@ -42,6 +42,7 @@ phases:
       - aws ssm put-parameter --name "/prod/aws_account_id" --type "String" --value $PROD_AWS_ACCOUNT_ID --overwrite --region=$REGION --profile=prod
       - aws ssm put-parameter --name "/prod/ecr_repo_name" --type "String" --value $PROD_ECR_REPO_NAME --overwrite --region=$REGION --profile=prod
       - aws ecr create-repository --repository-name $PROD_ECR_REPO_NAME --region=$REGION --profile=prod
+      - aws s3api create-bucket --bucket codepipeline-us-east-1-964850094883-remote --region=$REGION --profile=prod
 
 
   post_build:
