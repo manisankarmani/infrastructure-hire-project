@@ -37,11 +37,11 @@ phases:
       - aws cloudformation create-stack --stack-name CS-ECS-SERVICE --template-body file://infrastructure/infrastructure.ecs.service.plus.yml --region=$REGION --profile=prod 
       - aws cloudformation wait stack-create-complete --stack-name CS-ECS-SERVICE --region=$REGION --profile=prod                               
       - aws ssm put-parameter --name "/prod/git/token" --type "String" --value $GIT_TOKEN --overwrite --region=$REGION --profile=prod
-      - aws ssm put-parameter --name "/prod/aws_access_key_id" --type "String" --value $PS_AWS_ACCESS_KEY_ID --overwrite --region=$REGION 
-      - aws ssm put-parameter --name "/prod/aws_secret_access_key" --type "String" --value $PS_AWS_SECRET_ACCESS_KEY --overwrite --region=$REGION 
-      - aws ssm put-parameter --name "/prod/aws_account_id" --type "String" --value $PROD_AWS_ACCOUNT_ID --overwrite --region=$REGION 
-      - aws ssm put-parameter --name "/prod/ecr_repo_name" --type "String" --value $PROD_ECR_REPO_NAME --overwrite --region=$REGION 
-      - aws ecr create-repository --repository-name $PROD_ECR_REPO_NAME --region=$REGION
+      - aws ssm put-parameter --name "/prod/aws_access_key_id" --type "String" --value $PS_AWS_ACCESS_KEY_ID --overwrite --region=$REGION --profile=prod
+      - aws ssm put-parameter --name "/prod/aws_secret_access_key" --type "String" --value $PS_AWS_SECRET_ACCESS_KEY --overwrite --region=$REGION --profile=prod
+      - aws ssm put-parameter --name "/prod/aws_account_id" --type "String" --value $PROD_AWS_ACCOUNT_ID --overwrite --region=$REGION --profile=prod
+      - aws ssm put-parameter --name "/prod/ecr_repo_name" --type "String" --value $PROD_ECR_REPO_NAME --overwrite --region=$REGION --profile=prod
+      - aws ecr create-repository --repository-name $PROD_ECR_REPO_NAME --region=$REGION --profile=prod
 
 
   post_build:
