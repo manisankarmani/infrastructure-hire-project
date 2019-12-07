@@ -20,7 +20,7 @@ sts_default_provider_chain = boto3.client('sts')
 print('Default Provider Identity: : ' + sts_default_provider_chain.get_caller_identity()['Arn'])
 
 # Replace the ARN below with the one you need 
-role_to_assume_arn='arn:aws:iam::255027719495:role/remote_msdasitltd'
+role_to_assume_arn='arn:aws:iam::127722852541:role/AllowCrossAccountAccess'
 role_session_name='prod'
 
 response=sts_default_provider_chain.assume_role(
