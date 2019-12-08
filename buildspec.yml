@@ -43,8 +43,9 @@ phases:
       - aws ssm put-parameter --name "/prod/ecr_repo_name" --type "String" --value $PS_PROD_ECR_REPO_NAME --overwrite --region=${REGION} --profile=${PROFILE}
       - aws ecr create-repository --repository-name $PS_PROD_ECR_REPO_NAME --region=${REGION} --profile=${PROFILE}
       - aws s3api create-bucket --bucket codepipeline-us-east-1-964850094883-remote --region=${REGION} --profile=${PROFILE}
+
 #       --------------------------------------------------------------
-#       Creating stacks in prod environment 
+#       Creating infrastructure stacks in prod environment 
 #       --------------------------------------------------------------
 
       - aws cloudformation create-stack --stack-name CS-VPC --template-body file://infrastructure/infrastructure.vpc.yml --region=${REGION} --profile=${PROFILE}       
@@ -56,7 +57,15 @@ phases:
       - aws cloudformation create-stack --stack-name CS-ECS-CLUSTER --template-body file://infrastructure/infrastructure.ecs.cluster.yml --region=${REGION} --profile=${PROFILE} 
       - aws cloudformation wait stack-create-complete --stack-name CS-ECS-CLUSTER --region=${REGION} --profile=${PROFILE}                         
       - aws cloudformation create-stack --stack-name CS-ECS-SERVICE --template-body file://infrastructure/infrastructure.ecs.service.plus.yml --region=${REGION} --profile=${PROFILE} 
-      - aws cloudformation wait stack-create-complete --stack-name CS-ECS-SERVICE --region=${REGION} --profile=${PROFILE}                               
+      - aws cloudformation wait stack-create-complete --stack-name CS-ECS-SERVICE --region=${REGION} --profile=${PROFILE}    
+
+#       --------------------------------------------------------------
+#       Creating pipeline stacks in prod environment 
+#       --------------------------------------------------------------
+
+      - aws cloudformation create-stack --stack-name CS-PROD-PIPELINE --template-body file://infrastructure/infrastructure.prod.pipeline.yml --region=${REGION} --profile=${PROFILE} 
+      - aws cloudformation wait stack-create-complete --stack-name PROD-PIPELINE --region=${REGION} --profile=${PROFILE}    
+
 
 
   post_build:
