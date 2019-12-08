@@ -64,7 +64,7 @@ phases:
 #       --------------------------------------------------------------
 
       - aws cloudformation create-stack --stack-name CS-PROD-PIPELINE --template-body file://infrastructure/infrastructure.prod.pipeline.yml --region=${REGION} --profile=${PROFILE} 
-      - aws cloudformation wait stack-create-complete --stack-name PROD-PIPELINE --region=${REGION} --profile=${PROFILE}    
+      - aws cloudformation wait stack-create-complete --stack-name CS-PROD-PIPELINE --region=${REGION} --profile=${PROFILE}    
 
 
 
