@@ -27,6 +27,7 @@ phases:
   build:
     commands:
       - echo creating cloudformation template if it fails it tries to update the same in finally block
+      - echo "Region - $Env:REGION and Profile - $Env:PROFILE"
       - aws cloudformation create-stack --stack-name CS-VPC --template-body file://infrastructure/infrastructure.vpc.yml --region=$Env:REGION --profile=$Env:PROFILE       
       - aws cloudformation wait stack-create-complete --stack-name CS-VPC --region=$Env:REGION --profile=$Env:PROFILE       
       - aws cloudformation create-stack --stack-name CS-IAM --template-body file://infrastructure/infrastructure.iam.yml --capabilities=CAPABILITY_IAM   --region=$Env:REGION --profile=$Env:PROFILE 
