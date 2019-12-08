@@ -21,32 +21,23 @@ Supplied by Contrast Security as a deploying medium
 
 #### 1. Deployment Pipeline in Master Account to Deploy Fargate Application to Production Account 
 
-  - Step 1
-  - Step 2
-  - Step 3
-  - Step 4
-  
+- Created static pipeline in master account to check the permission is working
+- Once complete deployed the same in production account
+
 
 #### 2. Pipeline in Master Account to Deploy Pipeline in Production Account for Application Deployment
   
-  - Step 1
-  - Step 2
-  - Step 3
-  - Step 4
-  
+- Tested production pipeline in production account
+- Tested production pipeline deployed from master account
 
-#### 3. Include Monitoring for Pipeline 
-
-  - Step 1
-  - Step 2
-  - Step 3
-  - Step 4
-  
+#### 3. Include Monitoring for Pipeline   
 
 #### 4. Include Monitoring for Fargate Application 
 
-  - Step 1
-  - Step 2
-  - Step 3
-  - Step 4
-  
+## Improvements in progress
+- Use of nested cloudformation templates by uploading the sub templates in dynamic S3 
+- Check VPC details for security 
+- Check Security Groups for security
+- Work on s3 pull for the application
+
+
