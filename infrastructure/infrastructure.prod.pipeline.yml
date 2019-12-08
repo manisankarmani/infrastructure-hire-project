@@ -112,7 +112,7 @@ Resources:
               RunOrder: '3'
       ArtifactStore: 
         Type: S3 
-        Location: codepipeline-us-east-1-964850094883-remote
+        Location: !Ref S3Bucket	
 
 
 # Reference from codepipeline sample from AWS 
