@@ -1,7 +1,8 @@
 version: 0.2
 env:
-  variables:
+  exported-variables:
     REGION: us-east-1
+    PROFILE: prod
   parameter-store:
     PS_AWS_ACCESS_KEY_ID: /prod/aws_access_key_id
     PS_AWS_SECRET_ACCESS_KEY: /prod/aws_secret_access_key
@@ -26,23 +27,23 @@ phases:
   build:
     commands:
       - echo creating cloudformation template if it fails it tries to update the same in finally block
-      - aws cloudformation create-stack --stack-name CS-VPC --template-body file://infrastructure/infrastructure.vpc.yml --region=$REGION --profile=prod       
-      - aws cloudformation wait stack-create-complete --stack-name CS-VPC --region=$REGION --profile=prod       
-      - aws cloudformation create-stack --stack-name CS-IAM --template-body file://infrastructure/infrastructure.iam.yml --capabilities=CAPABILITY_IAM   --region=$REGION --profile=prod 
-      - aws cloudformation wait stack-create-complete --stack-name CS-IAM --region=$REGION --profile=prod             
-      - aws cloudformation create-stack --stack-name CS-SG --template-body file://infrastructure/infrastructure.securitygroup.yml --region=$REGION --profile=prod       
-      - aws cloudformation wait stack-create-complete --stack-name CS-SG --region=$REGION --profile=prod                   
-      - aws cloudformation create-stack --stack-name CS-ECS-CLUSTER --template-body file://infrastructure/infrastructure.ecs.cluster.yml --region=$REGION --profile=prod 
-      - aws cloudformation wait stack-create-complete --stack-name CS-ECS-CLUSTER --region=$REGION --profile=prod                         
-      - aws cloudformation create-stack --stack-name CS-ECS-SERVICE --template-body file://infrastructure/infrastructure.ecs.service.plus.yml --region=$REGION --profile=prod 
-      - aws cloudformation wait stack-create-complete --stack-name CS-ECS-SERVICE --region=$REGION --profile=prod                               
-      - aws ssm put-parameter --name "/prod/git/token" --type "String" --value $GIT_TOKEN --overwrite --region=$REGION --profile=prod
-      - aws ssm put-parameter --name "/prod/aws_access_key_id" --type "String" --value $PS_AWS_ACCESS_KEY_ID --overwrite --region=$REGION --profile=prod
-      - aws ssm put-parameter --name "/prod/aws_secret_access_key" --type "String" --value $PS_AWS_SECRET_ACCESS_KEY --overwrite --region=$REGION --profile=prod
-      - aws ssm put-parameter --name "/prod/aws_account_id" --type "String" --value $PROD_AWS_ACCOUNT_ID --overwrite --region=$REGION --profile=prod
-      - aws ssm put-parameter --name "/prod/ecr_repo_name" --type "String" --value $PROD_ECR_REPO_NAME --overwrite --region=$REGION --profile=prod
-      - aws ecr create-repository --repository-name $PROD_ECR_REPO_NAME --region=$REGION --profile=prod
-      - aws s3api create-bucket --bucket codepipeline-us-east-1-964850094883-remote --region=$REGION --profile=prod
+      - aws cloudformation create-stack --stack-name CS-VPC --template-body file://infrastructure/infrastructure.vpc.yml --region=$REGION --profile=$PROFILE       
+      - aws cloudformation wait stack-create-complete --stack-name CS-VPC --region=$REGION --profile=$PROFILE       
+      - aws cloudformation create-stack --stack-name CS-IAM --template-body file://infrastructure/infrastructure.iam.yml --capabilities=CAPABILITY_IAM   --region=$REGION --profile=$PROFILE 
+      - aws cloudformation wait stack-create-complete --stack-name CS-IAM --region=$REGION --profile=$PROFILE             
+      - aws cloudformation create-stack --stack-name CS-SG --template-body file://infrastructure/infrastructure.securitygroup.yml --region=$REGION --profile=$PROFILE       
+      - aws cloudformation wait stack-create-complete --stack-name CS-SG --region=$REGION --profile=$PROFILE                   
+      - aws cloudformation create-stack --stack-name CS-ECS-CLUSTER --template-body file://infrastructure/infrastructure.ecs.cluster.yml --region=$REGION --profile=$PROFILE 
+      - aws cloudformation wait stack-create-complete --stack-name CS-ECS-CLUSTER --region=$REGION --profile=$PROFILE                         
+      - aws cloudformation create-stack --stack-name CS-ECS-SERVICE --template-body file://infrastructure/infrastructure.ecs.service.plus.yml --region=$REGION --profile=$PROFILE 
+      - aws cloudformation wait stack-create-complete --stack-name CS-ECS-SERVICE --region=$REGION --profile=$PROFILE                               
+      - aws ssm put-parameter --name "/prod/git/token" --type "String" --value $GIT_TOKEN --overwrite --region=$REGION --profile=$PROFILE
+      - aws ssm put-parameter --name "/prod/aws_access_key_id" --type "String" --value $PS_AWS_ACCESS_KEY_ID --overwrite --region=$REGION --profile=$PROFILE
+      - aws ssm put-parameter --name "/prod/aws_secret_access_key" --type "String" --value $PS_AWS_SECRET_ACCESS_KEY --overwrite --region=$REGION --profile=$PROFILE
+      - aws ssm put-parameter --name "/prod/aws_account_id" --type "String" --value $PROD_AWS_ACCOUNT_ID --overwrite --region=$REGION --profile=$PROFILE
+      - aws ssm put-parameter --name "/prod/ecr_repo_name" --type "String" --value $PROD_ECR_REPO_NAME --overwrite --region=$REGION --profile=$PROFILE
+      - aws ecr create-repository --repository-name $PROD_ECR_REPO_NAME --region=$REGION --profile=$PROFILE
+      - aws s3api create-bucket --bucket codepipeline-us-east-1-964850094883-remote --region=$REGION --profile=$PROFILE
 
 
   post_build:
