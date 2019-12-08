@@ -17,4 +17,8 @@ Resources:
       Path: /
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AdministratorAccess
+Outputs:
+  AllowRemoteAccess:
+    Description: "Role for Remote Access , Please copy this to master in ssm parameter /prod/remoterole"
+    Value: !GetAtt AllowRemoteAccess.Arn
 

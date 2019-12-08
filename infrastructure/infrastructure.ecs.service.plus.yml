@@ -157,6 +157,6 @@ Outputs:
     Description: ApplicationLoadBalancer URL 
     Value: !Join
       - ""
-      - -
+      - 
         - "http://"
-        - !GetAtt: ApplicationLoadBalancer.DNSName
+        - !GetAtt ApplicationLoadBalancer.DNSName
