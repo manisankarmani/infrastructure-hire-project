@@ -42,7 +42,7 @@ phases:
       - aws ssm put-parameter --name "/prod/aws_account_id" --type "String" --value $VAR_REMOTE_ID --overwrite --region=${REGION} --profile=${PROFILE}
       - aws ssm put-parameter --name "/prod/ecr_repo_name" --type "String" --value $PS_PROD_ECR_REPO_NAME --overwrite --region=${REGION} --profile=${PROFILE}
       - aws ecr create-repository --repository-name $PS_PROD_ECR_REPO_NAME --region=${REGION} --profile=${PROFILE}
-      - aws s3api create-bucket --bucket codepipeline-us-east-1-964850094883-remote --region=${REGION} --profile=${PROFILE}
+      - aws s3api create-bucket --bucket codepipeline-us-east-1-964850094883-remote-location --region=${REGION} --profile=${PROFILE}
 
 #       --------------------------------------------------------------
 #       Creating infrastructure stacks in prod environment 
