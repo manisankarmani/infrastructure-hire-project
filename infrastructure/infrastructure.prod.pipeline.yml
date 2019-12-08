@@ -13,6 +13,11 @@ Parameters:
     Type: String
     Default: dev
   
+  S3Bucket:
+    Description: S3 Bucket Name
+    Type: String
+    Default: codepipeline-us-east-1-964850094883-remote
+
   BuildName:
     Description:  Build Name
     Type: String
