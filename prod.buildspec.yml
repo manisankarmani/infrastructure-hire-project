@@ -28,5 +28,5 @@ phases:
       - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
       - echo Build completed on `date`
       - echo Push Image to ECR
-      - docker tag mysecretapp:latest ${PROD_AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${PROD_ECR_REPO_NAM}:latest
-      - docker push ${PROD_AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${PROD_ECR_REPO_NAM}:latest       
+      - docker tag mysecretapp:latest ${PROD_AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${PROD_ECR_REPO_NAME}:latest
+      - docker push ${PROD_AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${PROD_ECR_REPO_NAME}:latest       

@@ -34,8 +34,11 @@ phases:
       - aws ssm put-parameter --name "/prod/git/token" --type "String" --value $GIT_TOKEN --overwrite --region=${REGION} --profile=${PROFILE}
       - aws ssm put-parameter --name "/prod/aws_access_key_id" --type "String" --value $PS_AWS_ACCESS_KEY_ID --overwrite --region=${REGION} --profile=${PROFILE}
       - aws ssm put-parameter --name "/prod/aws_secret_access_key" --type "String" --value $PS_AWS_SECRET_ACCESS_KEY --overwrite --region=${REGION} --profile=${PROFILE}
+#       --------------------------------------------------------------
+#       extracted remote account id from remote role       
+#       --------------------------------------------------------------
       - VAR_REMOTE_ID=`echo $PS_PROD_REMOTE_ACCESS_ROLE | cut -d':' -f 5`
-      - echo $VAR_REMOTE_ID
+      - echo $VAR_REMOTE_ID 
       - aws ssm put-parameter --name "/prod/aws_account_id" --type "String" --value $VAR_REMOTE_ID --overwrite --region=${REGION} --profile=${PROFILE}
       - aws ssm put-parameter --name "/prod/ecr_repo_name" --type "String" --value $PS_PROD_ECR_REPO_NAME --overwrite --region=${REGION} --profile=${PROFILE}
       - aws ecr create-repository --repository-name $PS_PROD_ECR_REPO_NAME --region=${REGION} --profile=${PROFILE}
