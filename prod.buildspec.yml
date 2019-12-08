@@ -35,8 +35,7 @@ phases:
 #     -------------------------------------------------------------
 #     Updated service using parameters and cloudformation template
 #     -------------------------------------------------------------
-      - aws cloudformation update-stack --stack-name CS-ECS-SERVICE --template-body file://infrastructure/infrastructure.ecs.service.plus.yml --region=${REGION} \
-        --parameters DockerImage=${PROD_AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${PROD_ECR_REPO_NAME}:latest
+      - aws cloudformation update-stack --stack-name CS-ECS-SERVICE --template-body file://infrastructure/infrastructure.ecs.service.plus.yml --parameters DockerImage="${PROD_AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${PROD_ECR_REPO_NAME}:latest"  --region=${REGION} 
       - aws cloudformation wait stack-create-complete --stack-name CS-ECS-SERVICE --region=${REGION} 
 
 
