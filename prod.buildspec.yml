@@ -1,5 +1,7 @@
 version: 0.2
 env:
+  variables:
+    REGION: us-east-1
   parameter-store:
     PS_AWS_ACCESS_KEY_ID: /prod/aws_access_key_id
     PS_AWS_SECRET_ACCESS_KEY: /prod/aws_secret_access_key
@@ -17,7 +19,7 @@ phases:
 
   pre_build:
     commands:
-      - docker build -t mysecretapp . 
+      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
 
   build:
     commands:
@@ -25,8 +27,15 @@ phases:
       
   post_build:
     commands:
-      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
       - echo Build completed on `date`
       - echo Push Image to ECR
       - docker tag mysecretapp:latest ${PROD_AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${PROD_ECR_REPO_NAME}:latest
-      - docker push ${PROD_AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${PROD_ECR_REPO_NAME}:latest       
+      - docker push ${PROD_AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${PROD_ECR_REPO_NAME}:latest
+      -   
+#     -------------------------------------------------------------
+#     Updated service using parameters and cloudformation template
+#     -------------------------------------------------------------
+      - aws cloudformation update-stack --stack-name CS-ECS-SERVICE --template-body file://infrastructure/infrastructure.ecs.service.plus.yml --parameters ParameterKey=DockerImage,ParameterValue="${PROD_AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${PROD_ECR_REPO_NAME}:latest"  --region=${REGION} 
+      - aws cloudformation wait stack-create-complete --stack-name CS-ECS-SERVICE --region=${REGION} 
+
+
