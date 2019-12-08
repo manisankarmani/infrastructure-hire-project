@@ -43,8 +43,8 @@ phases:
       - aws ssm put-parameter --name "/prod/ecr_repo_name" --type "String" --value $PS_PROD_ECR_REPO_NAME --overwrite --region=${REGION} --profile=${PROFILE}
       - aws ecr create-repository --repository-name $PS_PROD_ECR_REPO_NAME --region=${REGION} --profile=${PROFILE} 
       - s3_random_number=`date | md5sum | cut -d' ' -f1`
-      - s3_bucket=codepipeline-us-east-1-964850094883-remote-${s3_random_number}
-      - echo "$s3_bucket"
+      - s3_bucket=codepipeline-${REGION}-prod-${s3_random_number}
+      - echo "Creating Bucket - $s3_bucket"
       - aws s3api create-bucket --bucket=${s3_bucket} --region=${REGION} --profile=${PROFILE}
 
 #       --------------------------------------------------------------
