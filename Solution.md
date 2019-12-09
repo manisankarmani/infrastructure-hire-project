@@ -1,5 +1,10 @@
 ## Bug found
-First deployment of production pipeline works as the cloudformation is created on that. But susequent run fails as there is no change in the template. To avoid this instead of using $latest tag, use different tag for each repo
+First deployment of production pipeline works as the cloudformation is created in that run.Subsequent run fails as there is no change in the template. 
+
+``` An error occurred (ValidationError) when calling the UpdateStack operation: No updates are to be performed. 
+
+
+To avoid this instead of using $latest tag, use different tag for each repo
 Will update the same early tomorrow and test it
 
 ## DevOps Enabled Deployment Of Fargate Application 
